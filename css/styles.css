@@ -33,7 +33,7 @@ input[type="text"]:focus {
 
 @media (min-width: 1500px) {
   #mainSection {
-    margin: 10% 25% 15% 25%;
+    margin: 10% 25% 5% 25%;
   }
 
   .card {
@@ -85,7 +85,7 @@ input[type="text"]:focus {
 
 @media (min-width: 841px) and (max-width: 1499px) {
   #mainSection {
-    margin: 10% 20% 15% 25%;
+    margin: 10% 20% 5% 25%;
   }
 
   .card {
