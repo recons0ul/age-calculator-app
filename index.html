@@ -20,18 +20,21 @@
     <section id="mainSection">
       <div class="card">
         <div class="card-body">
-          <div class="birth-section">
-            <div class="birth-input">
+          <div class="birth-section container row">
+            <div class="birth-input col">
               <label for="day-input">Day</label>
-              <input id="day-input" type="text" minlength="1" maxlength="2" />
+              <input id="day-input" type="text" minlength="1" maxlength="2" placeholder="DD" />
+              <p id="day-input-error" class="error"></p>
             </div>
-            <div class="birth-input">
+            <div class="birth-input col">
               <label for="month-input">Month</label>
-              <input id="month-input" type="text" minlength="1" maxlength="2" />
+              <input id="month-input" type="text" minlength="1" maxlength="2" placeholder="MM" />
+              <p id="month-input-error" class="error"></p>
             </div>
-            <div class="birth-input">
+            <div class="birth-input col">
               <label for="year-input">Year</label>
-              <input id="year-input" type="text" minlength="4" maxlength="4" />
+              <input id="year-input" type="text" minlength="4" maxlength="4" placeholder="YYYY" />
+              <p id="year-input-error" class="error"></p>
             </div>
           </div>
           <div class="submit">
@@ -52,6 +55,15 @@
     </section>
     <script>
       function calculateAge() {
+        resetValidationErrors();
+
+        try {
+          validateInput();
+        } catch (validationError) {
+          console.log("Validation error occurred: " + validationError.message);
+          return;
+        }
+
         const birthDay = document.getElementById("day-input").value;
         const birthMonth = document.getElementById("month-input").value;
         const birthYear = document.getElementById("year-input").value;
@@ -60,55 +72,121 @@
         const today = new Date();
 
         let fullYears = today.getFullYear() - birthDate.getFullYear();
-        let fullMonths = (12 + birthDate.getMonth() - today.getMonth()) % 12;
 
-        if (today.getMonth() < birthDate.getMonth()) {
-          // Since birthday will still happen this year, reduce year by 1
-          fullYears--;
+        let fullMonths;
+        if (today.getMonth() > birthDate.getMonth()) {
+          fullMonths = today.getMonth() - birthDate.getMonth();
+        } else {
+          fullMonths = 12 - (birthDate.getMonth() - today.getMonth());
         }
 
         let fullDays;
-        if(today.getDate() <= birthDate.getDate()) {
-          fullDays = birthDate.getDate() - today.getDate();
-          if (fullDays !== 0) {
-            // birth day this year is in future
-            fullYears--;
-          }
-        } else {
-          // Since day in birth month is less than todays day, it's necessary to calculate remaining days from last month
-          let monthBeforeBirthMonthYear;
-          let monthBeforeBirthMonth = birthDate.getMonth() - 1;
-          if (monthBeforeBirthMonth < 1) {
-            monthBeforeBirthMonth = 12;
-            monthBeforeBirthMonthYear = today.getFullYear() - 1;
-          } else {
-            monthBeforeBirthMonthYear = today.getFullYear();
-          }
-          let daysInLastMonthBeforeBirthMonth = getDaysOfMonth(monthBeforeBirthMonthYear, monthBeforeBirthMonth);
-          
+        if (
+          (today.getDate() < birthDate.getDate() && today.getMonth() === birthDate.getMonth()) ||
+          today.getMonth() < birthDate.getMonth()
+        ) {
+          // birth day this year is in future
+          fullYears--;
           fullMonths--;
-          if (fullMonths < 0) {
-            fullYears--;
-            fullMonths += 12;
+          if (fullMonths === -1) {
+            fullMonths = 11;
           }
-
-          /* 
-          To calculate fullDays:
-          - subtract days from last month from todays days
-          - if result is negative, todays day is bigger than last month days, so calculation can start with 0
-          - otherwise the days from last months (or 0 in case of negativity) are added to the birth days
-          */
-          fullDays = Math.max(0, daysInLastMonthBeforeBirthMonth - today.getDate() - 1) +  birthDate.getDate();
+          // Calculate remaining days from birth day from last month plus days from beginning this month to today
+          let monthBeforeTodaysMonth = today.getMonth() - 1;
+          let monthBeforeTodaysMonthYear = today.getFullYear();
+          if (monthBeforeTodaysMonth === 0) {
+            monthBeforeTodaysMonth = 12;
+            monthBeforeTodaysMonthYear--;
+          }
+          // calculate difference in days
+          fullDays = Math.floor(
+            (today.getTime() -
+              new Date(
+                monthBeforeTodaysMonthYear,
+                monthBeforeTodaysMonth,
+                Math.min(birthDate.getDate(), getDaysOfMonth(monthBeforeTodaysMonthYear, monthBeforeTodaysMonth))
+              ).getTime()) /
+              1000 /
+              60 /
+              60 /
+              24
+          );
+        } else if (today.getDate() > birthDate.getDate()) {
+          // Since day in birth month is less than todays day (i.e. birth day already happened), it's only necessary to subtract todays day from birth day
+          fullDays = today.getDate() - birthDate.getDate();
+        } else {
+          // Todays it's the users birthday
+          fullDays = 0;
         }
-
 
         document.getElementById("yearAge").innerHTML = fullYears;
         document.getElementById("monthAge").innerHTML = fullMonths;
         document.getElementById("dayAge").innerHTML = fullDays;
       }
 
+      function resetValidationErrors() {
+        document.getElementById("day-input-error").innerHTML = null;
+        document.getElementById("day-input").style = null;
+        document.getElementById("month-input-error").innerHTML = null;
+        document.getElementById("month-input").style = null;
+        document.getElementById("year-input-error").innerHTML = null;
+        document.getElementById("year-input").style = null;
+      }
+
+      function validateInput() {
+        const birthDay = document.getElementById("day-input").value.trim();
+        const birthMonth = document.getElementById("month-input").value.trim();
+        const birthYear = document.getElementById("year-input").value.trim();
+
+        let isError = false;
+
+        if (birthDay === "") {
+          document.getElementById("day-input-error").innerHTML = "Field is required.";
+          document.getElementById("day-input").style.borderColor = "red";
+          isError = true;
+        }
+
+        if (birthMonth === "") {
+          document.getElementById("month-input-error").innerHTML = "Field is required.";
+          document.getElementById("month-input").style.borderColor = "red";
+          isError = true;
+        }
+
+        if (birthYear === "") {
+          document.getElementById("year-input-error").innerHTML = "Field is required.";
+          document.getElementById("year-input").style.borderColor = "red";
+          isError = true;
+        }
+
+        if (!isError) {
+          if (isNaN(birthYear)) {
+            document.getElementById("year-input-error").innerHTML = "Must be a valid year.";
+            document.getElementById("year-input").style.borderColor = "red";
+            isError = true;
+          } else if (+birthYear > new Date().getFullYear()) {
+            document.getElementById("year-input-error").innerHTML = "Must be in the past.";
+            document.getElementById("year-input").style.borderColor = "red";
+            isError = true;
+          } else if (isNaN(birthMonth) || +birthMonth > 12) {
+            document.getElementById("month-input-error").innerHTML = "Must be a valid month.";
+            document.getElementById("month-input").style.borderColor = "red";
+            isError = true;
+          } else if (isNaN(birthDay) || +birthDay > getDaysOfMonth(birthYear, +birthMonth - 1)) {
+            document.getElementById("day-input-error").innerHTML = "Must be a valid day.";
+            document.getElementById("day-input").style.borderColor = "red";
+            isError = true;
+          }
+        }
+
+        if (isError) {
+          throw new Error("invalid input");
+        }
+
+        return true;
+      }
+
       function getDaysOfMonth(year, month) {
-        return new Date(year, month, 0).getDate();
+        return new Date(year, month + 1, 0).getDate();
       }
     </script>
   </body>
