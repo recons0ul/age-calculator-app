@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "vitest": "^0.31.4"
+  },
+  "name": "age-calculator-app-main",
+  "description": "![Design preview for the Age calculator app coding challenge](./design/desktop-preview.jpg)",
+  "version": "1.0.0",
+  "main": "app.js",
+  "devDependencies": {
+    "http-server": "^14.1.0"
+  },
+  "scripts": {
+    "test": "vitest",
+    "start": "http-server -c-1"
+  },
+  "author": "recons0ul",
+  "license": "ISC"
+}
