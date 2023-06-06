@@ -3,16 +3,8 @@ import { validateInputIsNotEmpty } from "./validation";
 import { outputBirthMonthIsEmptyError, outputBirthYearIsEmptyError, outputBirthdayIsEmptyError } from "./output.js";
 
 describe("validateInputIsNotEmpty()", () => {
-  vi.mock("./output.js", () => {
-    return {
-      outputBirthdayIsEmptyError: vi.fn(() => {}),
-      outputBirthMonthIsEmptyError: vi.fn(() => {}),
-      outputBirthYearIsEmptyError: vi.fn(() => {})
-    }
-  });
+  vi.mock("./output.js");
   
-
-
   afterEach(() => {
     vi.restoreAllMocks();
   })
