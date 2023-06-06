@@ -10,7 +10,7 @@
     "http-server": "^14.1.0"
   },
   "scripts": {
-    "test": "vitest",
+    "test": "vitest --run --reporter verbose",
     "start": "http-server -c-1"
   },
   "author": "recons0ul",
