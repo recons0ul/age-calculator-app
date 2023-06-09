@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { birthdayOfThisYearIsInFuture, calculateFullYears, getDaysOfMonth } from "./date";
+import { birthdayOfThisYearIsInFuture, calculateFullDays, calculateFullYears, getDaysOfMonth, isDaysBetweenLessThanAMonth } from "./date";
 
 describe("getDaysOfMonth", () => {
   it.each([
@@ -59,6 +59,15 @@ describe("birthdayOfThisYearIsInFuture()", () => {
 
     expect(result).toBeFalsy();
   })
+
+  it("should return false if birth month is in past and the difference between todays month is 1", () => {
+    const today = new Date("March 02 2020 00:00:00"); 
+    const birthday = new Date("February 10 1989 00:00:00"); 
+
+    const result = birthdayOfThisYearIsInFuture(today, birthday);
+
+    expect(result).toBe(false);
+  })
 })
 
 describe("calculateFullYears()", () => {
@@ -79,4 +88,45 @@ describe("calculateFullYears()", () => {
 
     expect(fullYears).toBe(today.getFullYear() - birthDate.getFullYear() - 1);
   })
+})
+
+describe("calculateFullDays()", () => {
+  it("should be 20 for birthday=10/02/1989 and today=02/03/2020", () => {
+    const today = new Date("March 02 2020 00:00:00"); 
+    const birthday = new Date("February 10 1989 00:00:00"); 
+
+    const result = calculateFullDays(today, birthday);
+
+    expect(result).toBe(21);
+  })
+
+  it("should be 1 for birthday=10/02/2020 and today=11/02/2020", () => {
+    const today = new Date("February 11 2020 00:00:00"); 
+    const birthday = new Date("February 10 1989 00:00:00");
+
+    const result = calculateFullDays(today, birthday);
+
+    expect(result).toBe(1);
+  })
+
+  it("should be 30 for birthday=11/02/2020 and today=10/02/2020", () => {
+    const today = new Date("February 10 2020 00:00:00"); 
+    const birthday = new Date("February 11 1989 00:00:00");
+
+    const result = calculateFullDays(today, birthday);
+
+    expect(result).toBe(30);
+  })
+})
+
+describe("isDaysBetweenLessThanAMonth()", () => {
+  const birthday = new Date("February 10 1989 00:00:00"); 
+  const today = new Date("March 02 2020 00:00:00");
+
+  it("should be true for birthday=10/02/1989 and today=02/03/2020", () => {
+    const result = isDaysBetweenLessThanAMonth(today, birthday);
+
+    expect(result).toBe(true);
+  })
+  
 })
