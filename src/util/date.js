@@ -22,29 +22,18 @@ export function calculateFullMonths(today, birthDate) {
     fullMonths = 12 - (birthDate.getMonth() - today.getMonth());
   }
 
-  if (birthdayOfThisYearIsInFuture(today, birthDate)) {
-    fullMonths = fullMonths === 0 ? 11 : fullMonths - 1;
-  }
   return fullMonths;
 }
 
 export function calculateFullDays(today, birthDate) {
   if (birthdayOfThisYearIsInFuture(today, birthDate)) {
+    const fullMonths = calculateFullMonths(today, birthDate);
+    const fullYears = calculateFullYears(today, birthDate);
+
+    const dateBase = new Date(birthDate.getFullYear() + fullYears, birthDate.getMonth() + fullMonths, birthDate.getDate());
     // Calculate remaining days from birth day from last month plus days from beginning this month to today
-    let monthBeforeTodaysMonth = today.getMonth() - 1;
-    let monthBeforeTodaysMonthYear = today.getFullYear();
-    if (monthBeforeTodaysMonth === 0) {
-      monthBeforeTodaysMonth = 12;
-      monthBeforeTodaysMonthYear--;
-    }
-    // calculate difference in days
     return Math.floor(
-      (today.getTime() -
-        new Date(
-          monthBeforeTodaysMonthYear,
-          monthBeforeTodaysMonth,
-          Math.min(birthDate.getDate(), getDaysOfMonth(monthBeforeTodaysMonthYear, monthBeforeTodaysMonth))
-        ).getTime()) /
+      (today.getTime() - dateBase.getTime()) /
         1000 /
         60 /
         60 /
