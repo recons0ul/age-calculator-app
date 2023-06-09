@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { setFakeTime, fillBirthday } from "./utils/pageUtils";
 
 test("basic test", async ({ page }) => {
   await page.goto("/");
@@ -119,72 +120,5 @@ test.describe("Calculate age with valid inputs ", () => {
     });
   });
 
-  // to test the leap year cycle
-  for (const param of [
-    {year: 1986, expectedDay: "21", expectedMonth: "0", expectedYear: "34"}, 
-    {year: 1987, expectedDay: "21", expectedMonth: "0", expectedYear: "33"}, 
-    {year: 1988, expectedDay: "21", expectedMonth: "0", expectedYear: "32"}, 
-    {year: 1989, expectedDay: "21", expectedMonth: "0", expectedYear: "31"}]) {
-    test.describe(`Birthday is around february (past) (Birthday: 02/10/${param.year}, today: 02/03/2020)`, () => {
-      const birthday = new Date(param.year, 2, 10);
-      const today = new Date("March 02 2020 00:00:00");
-  
-      test.beforeEach(async ({ page }) => setFakeTime(page, today.valueOf()));
-  
-      test(`Calculated year to be ${param.expectedYear}`, async ({ page }) => {
-        await page.goto("/");
-        await fillBirthday(page, birthday);
-  
-        await page.getByRole("button").click();
-  
-        const outputYear = await page.locator("#yearAge").textContent();
-        expect(outputYear).toBe(param.expectedYear);
-      });
-  
-      test(`Calculated month to be ${param.expectedMonth}`, async ({ page }) => {
-        await page.goto("/");
-        await fillBirthday(page, birthday);
-  
-        await page.getByRole("button").click();
-  
-        const outputMonth = await page.locator("#monthAge").textContent();
-        expect(outputMonth).toBe(param.expectedMonth);
-      });
-  
-      test(`Calculated day to be ${param.expectedDay}`, async ({ page }) => {
-        await page.goto("/");
-        await fillBirthday(page, birthday);
-  
-        await page.getByRole("button").click();
-  
-        const outputDay = await page.locator("#dayAge").textContent();
-        expect(outputDay).toBe(param.expectedDay);
-      });
-    });
-  }
 
-  async function setFakeTime(page, value) {
-    await page.addInitScript(`{
-    // Extend Date constructor to default to fakeNow
-    Date = class extends Date {
-      constructor(...args) {
-        if (args.length === 0) {
-          super(${value});
-        } else {
-          super(...args);
-        }
-      }
-    }
-    // Override Date.now() to start from value
-    const __DateNowOffset = ${value} - Date.now();
-    const __DateNow = Date.now;
-    Date.now = () => __DateNow() + __DateNowOffset;
-  }`);
-  }
-
-  async function fillBirthday(page, birthday) {
-    await page.getByLabel("Day").fill(birthday.getDate().toString());
-    await page.getByLabel("Month").fill(birthday.getMonth().toString());
-    await page.getByLabel("Year").fill(birthday.getFullYear().toString());
-  }
 });

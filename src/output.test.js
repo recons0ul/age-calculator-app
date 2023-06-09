@@ -2,10 +2,11 @@
 
 import { describe, it, afterEach, beforeEach, vi, expect } from "vitest";
 import { JSDOM } from "jsdom";
-import { outputBirthdayIsEmptyError, outputBirthMonthIsEmptyError, outputBirthYearIsEmptyError } from "./output";
+import OutputHandler from "./output";
 import fs from "fs";
 import path from "path";
 
+const outputHandler = new OutputHandler();
 const htmlDocPath = path.join(process.cwd(), "index.html");
 const htmlDocumentContent = fs.readFileSync(htmlDocPath, "utf-8").toString();
 // This is necessary otherwise the test gets a SecurityException
@@ -23,7 +24,7 @@ beforeEach(() => {
 
 describe("outputBirthdayIsEmptyError()", () => {
   it("innerHTML for day-input-error is set after method call", () => {
-    outputBirthdayIsEmptyError();
+    outputHandler.outputBirthdayIsEmptyError();
 
     const errorElementDay = document.querySelector("#day-input-error");
 
@@ -31,14 +32,14 @@ describe("outputBirthdayIsEmptyError()", () => {
   });
 
   it("innerHTML for month-input-error is not set after method call", () => {
-    outputBirthdayIsEmptyError();
+    outputHandler.outputBirthdayIsEmptyError();
 
     const errorElementMonth = document.querySelector("#month-input-error");
     expect(errorElementMonth.innerHTML).toBe("");
   });
 
   it("innerHTML for year-input-error is not set after method call", () => {
-    outputBirthdayIsEmptyError();
+    outputHandler.outputBirthdayIsEmptyError();
 
     const errorElementYear = document.querySelector("#year-input-error");
     expect(errorElementYear.innerHTML).toBe("");
@@ -47,7 +48,7 @@ describe("outputBirthdayIsEmptyError()", () => {
 
 describe("outputBirthMonthIsEmptyError()", () => {
   it("innerHTML for month-input-error is set after method call", () => {
-    outputBirthMonthIsEmptyError();
+    outputHandler.outputBirthMonthIsEmptyError();
 
     const errorElementMonth = document.querySelector("#month-input-error");
 
@@ -55,14 +56,14 @@ describe("outputBirthMonthIsEmptyError()", () => {
   });
 
   it("innerHTML for day-input-error is not set after method call", () => {
-    outputBirthMonthIsEmptyError();
+    outputHandler.outputBirthMonthIsEmptyError();
 
     const errorElementDay = document.querySelector("#day-input-error");
     expect(errorElementDay.innerHTML).toBe("");
   });
 
   it("innerHTML for year-input-error is not set after method call", () => {
-    outputBirthMonthIsEmptyError();
+    outputHandler.outputBirthMonthIsEmptyError();
 
     const errorElementYear = document.querySelector("#year-input-error");
     expect(errorElementYear.innerHTML).toBe("");
@@ -71,7 +72,7 @@ describe("outputBirthMonthIsEmptyError()", () => {
 
 describe("outputBirthYearIsEmptyError()", () => {
   it("innerHTML for year-input-error is set after method call", () => {
-    outputBirthYearIsEmptyError();
+    outputHandler.outputBirthYearIsEmptyError();
 
     const errorElementYear = document.querySelector("#year-input-error");
 
@@ -79,14 +80,14 @@ describe("outputBirthYearIsEmptyError()", () => {
   });
 
   it("innerHTML for day-input-error is not set after method call", () => {
-    outputBirthYearIsEmptyError();
+    outputHandler.outputBirthYearIsEmptyError();
 
     const errorElementDay = document.querySelector("#day-input-error");
     expect(errorElementDay.innerHTML).toBe("");
   });
 
   it("innerHTML for month-input-error is not set after method call", () => {
-    outputBirthYearIsEmptyError();
+    outputHandler.outputBirthYearIsEmptyError();
 
     const errorElementMonth = document.querySelector("#month-input-error");
     expect(errorElementMonth.innerHTML).toBe("");

@@ -1,14 +1,15 @@
 import { calculateFullDays, calculateFullMonths, calculateFullYears } from "./src/util/date.js";
-import { validateInput, resetValidationErrors } from "./src/validation.js";
+import InputValidator from "./src/validation.js";
 
 const form = document.querySelector("form");
+const validator = new InputValidator();
 
 function formSubmitHandler(event) {
   event.preventDefault();
-  resetValidationErrors();
+  validator.resetValidationErrors();
 
   try {
-    validateInput();
+    validator.validateInput();
   } catch (validationError) {
     console.log("Validation error occurred: " + validationError.message);
     return;

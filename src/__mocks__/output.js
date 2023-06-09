@@ -1,5 +1,6 @@
-
 import { vi } from "vitest";
-export const outputBirthdayIsEmptyError = vi.fn(() => {});
-export const outputBirthMonthIsEmptyError = vi.fn(() => {});
-export const outputBirthYearIsEmptyError = vi.fn(() => {});
+export default class OutputHandler {
+  outputBirthdayIsEmptyError = vi.fn(() => {});
+  outputBirthMonthIsEmptyError = vi.fn(() => {});
+  outputBirthYearIsEmptyError = vi.fn(() => {});
+}
